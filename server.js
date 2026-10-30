@@ -3,11 +3,15 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 require('dotenv').config();
 
+const productRoutes = require('./routes/productRoutes');
+
 const app = express();
 
-// Middlewares
 app.use(express.json());
 app.use(cors());
+
+// Routes
+app.use('/api/products', productRoutes);
 
 // MongoDB Connection
 mongoose
@@ -15,7 +19,6 @@ mongoose
   .then(() => console.log('✅ MongoDB Atlas Successfully Connected!'))
   .catch((err) => console.error('❌ MongoDB Connection Error:', err));
 
-// Test Route
 app.get('/', (req, res) => {
   res.send('E-commerce & Admin Shared Backend API Running...');
 });
