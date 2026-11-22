@@ -2,17 +2,15 @@ const express = require('express');
 const router = express.Router();
 const Product = require('../models/Product');
 
-// Get All Products (User + Admin dono ke liye)
 router.get('/', async (req, res) => {
   try {
-    const products = await Product.find();
+    const products = await Product.find().sort({ _id: -1 });
     res.json(products);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 });
 
-// Add New Product (Admin panel ke liye)
 router.post('/', async (req, res) => {
   try {
     const newProduct = new Product(req.body);
@@ -20,6 +18,34 @@ router.post('/', async (req, res) => {
     res.status(201).json(savedProduct);
   } catch (error) {
     res.status(400).json({ message: error.message });
+  }
+});
+
+router.put('/:id', async (req, res) => {
+  try {
+    const updatedProduct = await Product.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true }
+    );
+    if (!updatedProduct) {
+      return res.status(404).json({ message: 'Product not found' });
+    }
+    res.json(updatedProduct);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+});
+
+router.delete('/:id', async (req, res) => {
+  try {
+    const deletedProduct = await Product.findByIdAndDelete(req.params.id);
+    if (!deletedProduct) {
+      return res.status(404).json({ message: 'Product not found' });
+    }
+    res.json({ message: 'Product deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
 });
 
